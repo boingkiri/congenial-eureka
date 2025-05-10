@@ -7,8 +7,8 @@ import argparse
 
 os.environ["MKL_THREADING_LAYER"]="GNU"
 
-# validation_skip = 200
-validation_skip = 50
+validation_skip = 200
+# validation_skip = 50
 
 def on_train_epoch_end(trainer):
     """
@@ -37,8 +37,11 @@ def parse_args():
     parser.add_argument("--device", type=str, default="0", help="cuda device, i.e. 0 or 0,1,2,3 or cpu")
     parser.add_argument("--project", type=str, default="runs/train", help="save to project/name")
     parser.add_argument("--name", type=str, default="exp", help="save to project/name")
-    parser.add_argument("--lr", type=float, default=0.01, help="learning rate")
     parser.add_argument("--batch", type=int, default=512, help="batch size")
+
+    parser.add_argument("--optimizer", type=str, default="AdamW", help="optimizer")
+    parser.add_argument("--lr", type=float, default=0.01, help="learning rate")
+    parser.add_argument("--momentum", type=float, default=0.937, help="SGD momentum")
     return parser.parse_args()
 
 
@@ -57,6 +60,14 @@ def main():
         args.device = [int(x) for x in args.device]
 
     start_time = time.time()
+    # train_result = model.train(data=args.data, 
+    #                         epochs=args.epochs, 
+    #                         batch=args.batch, 
+    #                         imgsz=args.imgsz, 
+    #                         device=args.device, 
+    #                         project=args.project, 
+    #                         name=args.name,
+    #                         lr0=args.lr)
     train_result = model.train(data=args.data, 
                             epochs=args.epochs, 
                             batch=args.batch, 
@@ -64,6 +75,8 @@ def main():
                             device=args.device, 
                             project=args.project, 
                             name=args.name,
+                            optimizer=args.optimizer,
+                            momentum=args.momentum,
                             lr0=args.lr)
     print(train_result)
     end_time = time.time()
